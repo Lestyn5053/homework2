@@ -22,6 +22,8 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   }
 };
 
+module.exports = { doActionThatMightFailValidation, app };
+
 app.get('/products', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
     response.json(await Product.find(request.query).select('-_id -__v'));
