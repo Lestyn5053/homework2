@@ -2,12 +2,15 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 const Mongoose = require('mongoose');
 require('dotenv').config();
+require('./controllers/userController');
+require('./controllers/productController');
+const UserRoutes = require('./routes/userRoutes');
 
 const Product = require('./models/product');
 
 const app = Express();
-
 app.use(BodyParser.json());
+app.use('/users', UserRoutes);
 
 const doActionThatMightFailValidation = async (request, response, action) => {
   try {
@@ -15,14 +18,12 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   } catch (e) {
     response.sendStatus(
       e.code === 11000
-            || e.stack.includes('ValidationError')
-            || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
+        || e.stack.includes('ValidationError')
+        || (e.reason !== undefined && e.reason.code === 'ERR_ASSERTION')
         ? 400 : 500,
     );
   }
 };
-
-module.exports = { doActionThatMightFailValidation, app };
 
 app.get('/products', async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
