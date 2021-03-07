@@ -1,6 +1,6 @@
 const BodyParser = require('body-parser');
 const Express = require('express');
-const Service = require('../services/databaseService');
+const Service = require('../services/userService');
 
 const app = Express();
 app.use(BodyParser.json());
@@ -36,10 +36,40 @@ const getUserBySSN = async (request, response) => {
 };
 
 const postUsers = async (request, response) => {
-  // const { user, content } = request.body;
   await doActionThatMightFailValidation(request, response, async () => {
     response.json(await Service.postUser(request.body));
-    response.sendStatus(201);
   });
 };
-module.exports = { getUsers, getUserBySSN, postUsers };
+
+const deleteUsers = async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus((await Service.deleteUsers(request.query)).deletedCount > 0 ? 200 : 404);
+  });
+};
+
+const deleteUserBySSN = async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    response.sendStatus((await Service.deleteUserBySSN(request)).deletedCount > 0 ? 200 : 404);
+  });
+};
+
+const putUser = async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    await Service.putUser(request);
+    response.sendStatus(200);
+  });
+};
+
+const patchUser = async (request, response) => {
+  await doActionThatMightFailValidation(request, response, async () => {
+    const patchResult = await Service.patchUser(request);
+    if (patchResult != null) {
+      response.json(patchResult);
+    } else {
+      response.sendStatus(404);
+    }
+  });
+};
+module.exports = {
+  getUsers, getUserBySSN, postUsers, deleteUsers, deleteUserBySSN, putUser, patchUser,
+};
