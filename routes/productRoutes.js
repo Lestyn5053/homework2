@@ -9,5 +9,5 @@ Router.get('/:sku', ProductController.getProductBySKU);
 Router.delete('/', ProductController.deleteProducts);
 Router.delete('/:sku', ProductController.deleteProductBySKU);
 Router.put('/:sku', ProductController.putProduct);
-Router.patch(':/sku', ProductController.patchProduct);
+Router.patch('/:sku', ProductController.patchProduct);
 module.exports = Router;
