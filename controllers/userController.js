@@ -1,8 +1,6 @@
 const BodyParser = require('body-parser');
 const Express = require('express');
-const User = require('../models/user');
 const Service = require('../services/databaseService');
-require('../server');
 
 const app = Express();
 app.use(BodyParser.json());
@@ -20,46 +18,28 @@ const doActionThatMightFailValidation = async (request, response, action) => {
   }
 };
 
-const getUserBySSN = async (request, response) => {
-  try {
-    await doActionThatMightFailValidation(request, response, Service.getUserBySSN(request));
-  } catch (e) {
-    response.sendStatus(500);
-  }
-};
-
-const postUsers = async (request, response) => {
-  const { user, content } = request.body;
-  try {
-    await doActionThatMightFailValidation(request, response, async () => {
-      await Service.postUser(user, content);
-      response.sendStatus(201);
-    });
-  } catch (e) {
-    response.sendStatus(500);
-  }
-};
-module.exports = { getUserBySSN, postUsers };
-app.get('/users', async (request, response) => {
+const getUsers = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    response.json(await User.find(request.query).select('-_id -__v'));
+    response.json(await Service.getUsers(request.query));
   });
-});
+};
 
-/* app.get('/users/:ssn', async (request, response) => {
+const getUserBySSN = async (request, response) => {
   await doActionThatMightFailValidation(request, response, async () => {
-    const getResult = await User.findOne({ ssn: request.params.ssn }).select('-_id -__v');
+    const getResult = await Service.getUserBySSN(request);
     if (getResult != null) {
       response.json(getResult);
     } else {
       response.sendStatus(404);
     }
   });
-}); */
+};
 
-app.post('/users', async (request, response) => {
+const postUsers = async (request, response) => {
+  // const { user, content } = request.body;
   await doActionThatMightFailValidation(request, response, async () => {
-    await new User(request.body).save();
+    response.json(await Service.postUser(request.body));
     response.sendStatus(201);
   });
-});
+};
+module.exports = { getUsers, getUserBySSN, postUsers };

@@ -2,8 +2,6 @@ const Express = require('express');
 const BodyParser = require('body-parser');
 const Mongoose = require('mongoose');
 require('dotenv').config();
-require('./controllers/userController');
-require('./controllers/productController');
 const UserRoutes = require('./routes/userRoutes');
 
 const Product = require('./models/product');

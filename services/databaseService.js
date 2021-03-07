@@ -11,7 +11,7 @@ exports.getProducts = async function (query) {
 
 exports.getUsers = async function (query) {
   try {
-    return await User.find(query);
+    return await User.find(query).select('-_id -__v');
   } catch (e) {
     throw Error(e.message);
   }
@@ -19,7 +19,7 @@ exports.getUsers = async function (query) {
 
 exports.getUserBySSN = async function (query) {
   try {
-    await User.findOne({ ssn: query.params.ssn }).select('-_id -__v');
+    return await User.findOne({ ssn: query.params.ssn }).select('-_id -__v');
   } catch (e) {
     throw Error(e.message);
   }
@@ -27,7 +27,7 @@ exports.getUserBySSN = async function (query) {
 
 exports.postUser = async function (query) {
   try {
-    return await User.save(query.body);
+    return await new User(query).save();
   } catch (e) {
     throw new Error(e.message);
   }
